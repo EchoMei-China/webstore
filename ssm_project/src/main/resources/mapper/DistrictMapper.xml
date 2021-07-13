@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.DistrictMapper">
+    <resultMap id="districtMap" type="com.example.pojo.District">
+        <result property="did" column="did"></result>
+        <result property="dname" column="dname"></result>
+        <result property="cid" column="cid"></result>
+        <result property="shipping" column="shipping"></result>
+
+        <association property="city" javaType="com.example.pojo.City">
+            <result property="cid" column="cid"></result>
+            <result property="cname" column="cname"></result>
+            <result property="pid" column="pid"></result>
+
+            <association property="province" javaType="com.example.pojo.Province">
+                <result property="pid" column="pid"></result>
+                <result property="pname" column="pname"></result>
+            </association>
+
+        </association>
+
+    </resultMap>
+
+    <select id="queryDistrictByCname" resultMap="districtMap">
+        select o.did,
+        o.dname,
+        o.cid,
+        o.shipping,
+        e.cid,
+        e.cname
+        from district o, city e
+        where o.cid = e.cid
+        and e.cname = #{cname}
+    </select>
+
+    <select id="queryShippingByDname" resultMap="districtMap">
+        select did, dname, cid, shipping from district where dname = #{dname}
+    </select>
+
+    <select id="queryAllDistricts" resultMap="districtMap">
+        select o.pid,
+        o.pname,
+        h.shipping,
+        h.dname,
+        h.did,
+        e.cid,
+        e.cname
+        from district h, province o ,city e
+        where o.pid = e.pid and e.cid = h.cid
+        limit 10
+    </select>
+
+    <select id="queryCurrentDistricts" resultMap="districtMap">
+        select o.pid,
+        o.pname,
+        h.shipping,
+        h.dname,
+        h.did,
+        e.cid,
+        e.cname
+        from district h, province o ,city e
+        where o.pid = e.pid and e.cid = h.cid
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <update id="changeShipping">
+        update district o, city e, province h
+        set o.shipping = #{shipping}
+        where o.cid = e.cid
+        and e.pid = h.pid
+        and h.pid = #{pid}
+    </update>
+
+    <select id="queryBySearch" resultMap="districtMap">
+        select o.pid,
+        o.pname,
+        h.shipping,
+        h.dname,
+        h.did,
+        e.cid,
+        e.cname
+        from district h, province o ,city e
+        where o.pid = e.pid and e.cid = h.cid
+        and o.pname like "%"#{searchInformation}"%"
+    </select>
+
+    <select id="queryAllcount" resultType="_int">
+        select count(*) from district
+    </select>
+</mapper>

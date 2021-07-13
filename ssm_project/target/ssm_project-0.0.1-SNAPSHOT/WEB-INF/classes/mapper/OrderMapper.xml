@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.OrderMapper">
+    <resultMap id="orderMap" type="com.example.pojo.Order">
+        <result property="oid" column="oid"></result>
+        <result property="user_id" column="user_id"></result>
+        <result property="useraddress" column="useraddress"></result>
+        <result property="opay" column="opay"></result>
+        <result property="oshipping" column="oshipping"></result>
+        <result property="osignfor" column="osignfor"></result>
+        <result property="ocomment" column="ocomment"></result>
+        <result property="otime" column="otime"></result>
+        <result property="oprice" column="oprice"></result>
+        <result property="shippingpay" column="shippingpay"></result>
+
+        <association property="user" javaType="com.example.pojo.User">
+            <result property="userId" column="user_id"></result>
+            <result property="userNickname" column="user_nickname"></result>
+        </association>
+
+    </resultMap>
+
+    <select id="ManageAllOrders" resultMap="orderMap">
+        select o.oid,
+        o.user_id,
+        o.useraddress,
+        o.opay,
+        o.oshipping,
+        o.osignfor,
+        o.ocomment,
+        o.otime,
+        o.oprice,
+        e.user_id,
+        e.user_nickname
+        from `order` o, user e
+        where o.user_id = e.user_id
+        limit 10
+    </select>
+
+    <select id="ManageAllOrderCount" resultType="_int">
+        select count(*) from `order`
+    </select>
+
+    <select id="ManageAllCurrentOrders" resultMap="orderMap">
+        select o.oid,
+        o.user_id,
+        o.useraddress,
+        o.opay,
+        o.oshipping,
+        o.osignfor,
+        o.ocomment,
+        o.otime,
+        o.oprice,
+        e.user_id,
+        e.user_nickname
+        from `order` o, `user` e
+        where o.user_id = e.user_id
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <insert id="insertOrder">
+        insert into `order` (oid, user_id, useraddress, otime, oprice, shippingpay)
+        values (#{oid}, #{user_id}, #{useraddress}, #{otime}, #{oprice}, #{shippingpay})
+    </insert>
+
+    <update id="changeOpay">
+        update `order`
+        set opay = 1
+        where oid = #{oid}
+    </update>
+
+    <select id="queryAllOrders" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        limit 5
+    </select>
+
+    <select id="queryPayOrders" resultMap="orderMap">
+        select o.oid,
+        o.user_id,
+        e.user_id,
+        o.opay,
+        o.oshipping,
+        o.osignfor,
+        o.ocomment,
+        o.oprice,
+        o.shippingpay
+        from `order` o, user e
+        where o.user_id = e.user_id and o.user_id = #{user_id}
+        and o.opay = 0
+        limit 5
+    </select>
+
+    <select id="queryShippingOrders" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and opay = 1
+        and oshipping = 0
+        limit 5
+    </select>
+
+    <select id="querySignforOrders" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and oshipping =1
+        and osignfor = 0
+        limit 5
+    </select>
+
+    <select id="queryCommentOrders" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and osignfor = 1
+        and ocomment = 0
+        limit 5
+    </select>
+
+    <delete id="deleteByOid">
+        delete from `order`
+        where oid = #{oid}
+    </delete>
+
+    <update id="changeOcomment">
+        update `order`
+        set ocomment = 1
+        where oid = #{oid}
+    </update>
+
+    <update id="changeOshipping">
+        update `order`
+        set oshipping = 1
+        where oid = #{oid}
+    </update>
+
+    <update id="changeOsignfor">
+        update `order`
+        set osignfor = 1
+        where oid = #{oid}
+    </update>
+
+    <update id="changeAddress">
+        update `order`
+        set useraddress = #{useraddress}
+        where oid = #{oid}
+    </update>
+
+    <select id="queryAllOrderCounts" resultType="_int">
+        select count(*) from `order`
+        where user_id = #{user_id}
+    </select>
+
+    <select id="queryPayOrderCounts" resultType="_int">
+        select count(*) from `order`
+        where user_id = #{user_id}
+        and opay = 0
+    </select>
+
+    <select id="queryShippingOrderCounts" resultType="_int">
+        select count(*) from `order`
+        where user_id = #{user_id}
+        and opay = 1
+        and oshipping = 0
+    </select>
+
+    <select id="querySignforOrderCounts" resultType="_int">
+        select count(*) from `order`
+        where user_id = #{user_id}
+        and oshipping = 1
+        and osignfor = 0
+    </select>
+
+    <select id="queryCommentOrderCounts" resultType="_int">
+        select count(*) from `order`
+        where user_id = #{user_id}
+        and osignfor = 1
+        and ocomment = 0
+    </select>
+
+    <select id="queryCurrentAllOrder" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryCurrentPayOrder" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and opay = 0
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryCurrentShippingOrder" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and opay = 1
+        and oshipping = 0
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryCurrentSignforOrder" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and oshipping = 1
+        and osignfor = 0
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryCurrentCommentOrder" resultMap="orderMap">
+        select * from `order`
+        where user_id = #{user_id}
+        and osignfor = 1
+        and ocomment = 0
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryLikeByOid" resultMap="orderMap">
+        select o.oid,
+        o.user_id,
+        o.useraddress,
+        o.opay,
+        o.oshipping,
+        o.osignfor,
+        o.ocomment,
+        o.otime,
+        o.oprice,
+        e.user_id,
+        e.user_nickname
+        from `order` o, user e
+        where o.user_id = e.user_id
+        and o.oid like "%"#{oidSnippet}"%"
+    </select>
+</mapper>

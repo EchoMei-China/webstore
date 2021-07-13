@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.BookKindMapper">
+    <resultMap id="bookkindMap" type="com.example.pojo.BookKind">
+        <result property="kid" column="kid"></result>
+        <result property="kname" column="kname"></result>
+    </resultMap>
+
+    <select id="queryBookKind" resultMap="bookkindMap">
+        select * from bookkind;
+    </select>
+
+    <select id="queryByKid" resultMap="bookkindMap">
+        SELECT kname FROM bookkind WHERE kid = #{tkid};
+    </select>
+
+    <select id="queryByKname" resultMap="bookkindMap">
+        SELECT kid FROM bookkind WHERE kname = #{kname};
+    </select>
+</mapper>

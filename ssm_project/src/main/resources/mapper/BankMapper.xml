@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.BankMapper">
+    <resultMap id="bankMap" type="com.example.pojo.Bank">
+        <result property="bkid" column="bkid"></result>
+        <result property="bkname" column="bkname"></result>
+        <result property="bkimage" column="bkimage"></result>
+        <result property="singlelimit" column="singlelimit"></result>
+        <result property="dailylimit" column="dailylimit"></result>
+
+    </resultMap>
+
+    <select id="queryAllBank" resultMap="bankMap">
+        select * from bank
+    </select>
+
+    <select id="queryBankByBkname" resultMap="bankMap">
+        select * from bank where bkname = #{bkname}
+    </select>
+
+</mapper>

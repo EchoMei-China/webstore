@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.AddressMapper">
+    <resultMap id="addressMap" type="com.example.pojo.Address">
+        <result property="adid" column="adid"></result>
+        <result property="user_id" column="user_id"></result>
+        <result property="uname" column="uname"></result>
+        <result property="uphone" column="uphone"></result>
+        <result property="pname" column="pname"></result>
+        <result property="cname" column="cname"></result>
+        <result property="dname" column="dname"></result>
+        <result property="area" column="area"></result>
+        <result property="postalcode" column="postalcode"></result>
+
+
+        <association property="province" javaType="com.example.pojo.Province">
+            <result property="pid" column="pid"></result>
+            <result property="pname" column="pname"></result>
+        </association>
+
+        <association property="city" javaType="com.example.pojo.City">
+            <result property="cid" column="cid"></result>
+            <result property="cname" column="cname"></result>
+            <result property="pid" column="pid"></result>
+        </association>
+
+        <association property="district" javaType="com.example.pojo.District">
+            <result property="did" column="did"></result>
+            <result property="dname" column="dname"></result>
+            <result property="cid" column="cid"></result>
+            <result property="shipping" column="shipping"></result>
+        </association>
+
+    </resultMap>
+
+    <insert id="createNewAddress">
+        insert into address (user_id, uname, uphone, pname, cname, dname, area, postalcode)
+        values (#{user_id}, #{uname}, #{uphone}, #{pname}, #{cname}, #{dname}, #{area}, #{postalcode})
+    </insert>
+
+    <select id="queryAddressByUserId" resultMap="addressMap">
+        select * from address where user_id = #{user_id}
+    </select>
+
+    <select id="queryCountByUserId" resultType="java.lang.Integer">
+        select count(*) from address where user_id = #{user_id}
+    </select>
+
+    <delete id="deleteAddress">
+        delete from address
+        where adid = #{adid}
+    </delete>
+
+    <select id="queryAddressByAdid" resultMap="addressMap">
+        select * from address
+        where adid = #{adid}
+    </select>
+
+    <update id="updateAddress">
+        update address
+        set uname = #{uname},
+        uphone = #{uphone},
+        pname = #{pname},
+        cname = #{cname},
+        dname = #{dname},
+        area = #{area},
+        postalcode = #{postalcode}
+        where adid = #{adid}
+    </update>
+</mapper>

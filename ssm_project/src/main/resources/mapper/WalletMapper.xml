@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.WalletMapper">
+    <resultMap id="walletMap" type="com.example.pojo.Wallet">
+        <result property="wid" column="wid"></result>
+        <result property="user_id" column="user_id"></result>
+        <result property="bkid" column="bkid"></result>
+        <result property="cardtype" column="cardtype"></result>
+        <result property="cardnumber" column="cardnumber"></result>
+        <result property="cardpsd" column="cardpsd"></result>
+
+        <association property="user" javaType="com.example.pojo.User">
+            <result property="userId" column="user_id"></result>
+            <result property="userNickname" column="user_nickname"></result>
+            <result property="userName" column="user_name"></result>
+            <result property="userPassword" column="user_password"></result>
+            <result property="cardNo" column="card_no"></result>
+        </association>
+
+        <association property="bank" javaType="com.example.pojo.Bank">
+            <result property="bkid" column="bkid"></result>
+            <result property="bkname" column="bkname"></result>
+            <result property="bkimage" column="bkimage"></result>
+            <result property="singlelimit" column="singlelimit"></result>
+            <result property="dailylimit" column="dailylimit"></result>
+        </association>
+
+    </resultMap>
+
+    <select id="queryWalletByUserId" resultMap="walletMap">
+        select o.wid,
+        o.user_id,
+        o.bkid,
+        o.cardtype,
+        o.cardnumber,
+        o.cardpsd,
+        e.bkid,
+        e.bkname,
+        e.bkimage,
+        e.singlelimit,
+        e.dailylimit
+        from wallet o, bank e
+        where o.bkid = e.bkid
+        and o.user_id = #{user_id}
+    </select>
+
+    <insert id="insertWallet">
+        insert into wallet (user_id, bkid, cardtype, cardnumber, cardpsd)
+        values (#{user_id}, #{bkid}, #{cardtype}, #{cardnumber}, #{cardpsd})
+    </insert>
+
+    <delete id="deleteByBkidAndCardnumber">
+        delete from wallet
+        where bkid = #{bkid} and cardnumber = #{cardnumber}
+    </delete>
+
+    <select id="queryByBkidAndCardno" resultType="java.lang.Integer">
+        select count(*) from wallet
+        where bkid = #{bkid} and cardnumber = #{cardnumber}
+    </select>
+
+    <select id="queryByWid" resultMap="walletMap">
+        select * from wallet where wid = #{wid}
+    </select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.OrderDetailMapper">
+    <resultMap id="orderdetailMap" type="com.example.pojo.OrderDetail">
+        <result property="odid" column="odid"></result>
+        <result property="oid" column="oid"></result>
+        <result property="bid" column="bid"></result>
+        <result property="odquantity" column="odquantity"></result>
+        <result property="odprice" column="odprice"></result>
+
+        <association property="order" javaType="com.example.pojo.Order">
+            <result property="oid" column="oid"></result>
+            <result property="opay" column="opay"></result>
+            <result property="oshipping" column="oshipping"></result>
+            <result property="osignfor" column="osignfor"></result>
+            <result property="ocomment" column="ocomment"></result>
+            <result property="oprice" column="oprice"></result>
+            <result property="shippingpay" column="shippingpay"></result>
+        </association>
+
+        <association property="book" javaType="com.example.pojo.Book">
+            <result property="bid" column="bid"></result>
+            <result property="bname" column="bname"></result>
+            <result property="bprice" column="bprice"></result>
+            <result property="bnowprice" column="bnowprice"></result>
+            <result property="bwriter" column="bwriter"></result>
+            <result property="bimage" column="bimage"></result>
+        </association>
+
+    </resultMap>
+
+    <insert id="insertOrderDetail">
+        insert into orderdetail (oid, bid, odquantity, odprice)
+        values (#{oid}, #{bid}, #{odquantity}, #{odprice})
+    </insert>
+
+    <select id="queryAllOrderdetails" resultMap="orderdetailMap">
+        select o.odid,
+        o.oid,
+        o.bid,
+        o.odquantity,
+        o.odprice,
+        e.oid,
+        e.user_id,
+        e.opay,
+        e.oshipping,
+        e.osignfor,
+        e.ocomment,
+        e.shippingpay,
+        e.oprice,
+        p.bid,
+        p.bimage,
+        p.bname,
+        p.bnowprice,
+        p.bwriter
+        from orderdetail o, `order` e, book p
+        where o.oid = e.oid and o.bid = p.bid and o.oid = #{oid}
+    </select>
+
+    <delete id="deleteByOid">
+        delete from orderdetail
+        where oid = #{oid}
+    </delete>
+</mapper>

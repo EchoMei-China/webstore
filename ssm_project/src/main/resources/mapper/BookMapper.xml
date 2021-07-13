@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.BookMapper">
+    <resultMap id="bookMap" type="com.example.pojo.Book">
+        <result property="bid" column="bid"></result>
+        <result property="bname" column="bname"></result>
+        <result property="bwriter" column="bwriter"></result>
+        <result property="bprice" column="bprice"></result>
+        <result property="bnowprice" column="bnowprice"></result>
+        <result property="bimage" column="bimage"></result>
+        <result property="clicknum" column="clicknum"></result>
+        <result property="binventory" column="binventory"></result>
+        <result property="tid" column="tid"></result>
+        <result property="btranslate" column="btranslate"></result>
+        <result property="bpublishing" column="bpublishing"></result>
+        <result property="bisbn" column="bisbn"></result>
+        <result property="bsuit" column="bsuit"></result>
+        <result property="favorites" column="favorites"></result>
+        <result property="tryreading" column="tryreading"></result>
+        <result property="salenum" column="salenum"></result>
+
+        <association property="booktype" javaType="com.example.pojo.BookType">
+            <result property="tid" column="tid"></result>
+            <result property="tname" column="tname"></result>
+            <result property="kid" column="kid"></result>
+
+            <association property="bookkind" javaType="com.example.pojo.BookKind">
+                <result property="kid" column="kid"></result>
+                <result property="kname" column="kname"></result>
+            </association>
+        </association>
+
+    </resultMap>
+
+
+    <select id="queryFivePopularBook" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.clicknum,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        h.tname,
+        e.kid,
+        e.kname
+        FROM book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid
+        ORDER BY o.clicknum DESC LIMIT 5
+    </select>
+
+    <select id="queryFiveSmallSpotBook" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid AND o.binventory !=0
+        ORDER BY o.binventory LIMIT 5
+    </select>
+
+    <select id="queryFiveSoonScheduled" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid AND o.binventory =0
+        ORDER BY o.clicknum DESC LIMIT 5
+    </select>
+
+    <select id="queryBookByTid" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid AND o.tid = #{btid}
+        ORDER BY clicknum DESC LIMIT 12;
+    </select>
+
+    <select id="queryFiveFavoritesBook" resultMap="bookMap">
+        select o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM  book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid
+        ORDER BY o.favorites DESC LIMIT 5
+    </select>
+
+    <select id="query12BooksByKid" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.clicknum,
+        e.tid,
+        e.kid,
+        p.kid
+        FROM book o, booktype e, bookkind p
+        WHERE o.tid = e.tid AND e.kid = p.kid
+        AND p.kid = #{kid}
+        ORDER BY o.clicknum DESC LIMIT 12
+    </select>
+
+    <select id="queryCount" resultType="_int">
+        SELECT COUNT(*) FROM book, bookkind, booktype
+        WHERE book.tid = booktype.tid AND booktype.kid = bookkind.kid
+        AND bookkind.kid = #{kid}
+    </select>
+
+    <select id="queryCountByTid" resultType="_int">
+        select count(*) from book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid AND o.tid = #{btid}
+    </select>
+
+    <select id="queryCurrentCount" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.clicknum,
+        e.tid,
+        e.kid,
+        p.kid
+        FROM book o, booktype e, bookkind p
+        WHERE o.tid = e.tid AND e.kid = p.kid
+        AND p.kid = #{kid}
+        ORDER BY o.clicknum DESC LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryCurrentCountByTid" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.clicknum,
+        h.tid,
+        h.kid,
+        e.kid
+        FROM book o, booktype h, bookkind e
+        WHERE o.tid = h.tid AND h.kid = e.kid AND o.tid = #{btid}
+        ORDER BY o.clicknum DESC LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryBySearch" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM  book o, booktype h, bookkind e
+        WHERE o.tid = h.tid
+        AND h.kid = e.kid
+        and (o.bname like "%"#{searchInformation}"%" or o.bwriter like "%"#{searchInformation}"%" or o.bpublishing like "%"#{searchInformation}"%")
+        ORDER BY o.favorites DESC LIMIT 12
+    </select>
+
+    <select id="queryCountBySearch" resultType="_int">
+        select * from book o
+        where o.bname like "%"#{searchInformation}"%" or o.bwriter like "%"#{searchInformation}"%" or o.bpublishing like "%"#{searchInformation}"%"
+    </select>
+
+    <select id="queryCurrentCountBySearch" resultMap="bookMap">
+        SELECT o.bid,
+        o.bname,
+        o.bwriter,
+        o.bprice,
+        o.bnowprice,
+        o.bimage,
+        o.tid,
+        o.btranslate,
+        o.bpublishing,
+        o.bisbn,
+        o.bsuit,
+        o.favorites,
+        o.tryreading,
+        h.tid,
+        h.kid,
+        e.kid,
+        e.kname,
+        h.tname,
+        o.binventory
+        FROM  book o, booktype h, bookkind e
+        WHERE o.tid = h.tid
+        AND h.kid = e.kid
+        and (o.bname like "%"#{searchInformation}"%" or o.bwriter like "%"#{searchInformation}"%" or o.bpublishing like "%"#{searchInformation}"%")
+        ORDER BY o.favorites DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryAllBooks" resultMap="bookMap">
+        select * from book limit 10
+    </select>
+
+    <select id="queryAllBooksCount" resultType="_int">
+        select count(*) from book
+    </select>
+
+    <select id="queryCurrentAllBooks" resultMap="bookMap">
+        select * from book limit #{startIndex},#{pageSize}
+    </select>
+
+    <delete id="deleteByBid">
+        delete from book where bid = #{bid}
+    </delete>
+
+    <select id="queryBookByBid" resultMap="bookMap">
+        select * from book
+        where bid = #{bid}
+    </select>
+
+    <update id="addClicknum">
+        update book
+        set clicknum = clicknum + 1
+        where bid = #{bid}
+    </update>
+
+    <update id="addFavorites">
+        update book
+        set favorites = favorites + 1
+        where bid = #{bid}
+    </update>
+
+    <update id="reduceBinventory">
+        update book
+        set binventory = binventory - #{odquantity}
+        where bid = #{bid}
+    </update>
+
+    <update id="addSalenum">
+        update book
+        set salenum = salenum + #{odquantity}
+        where bid = #{bid}
+    </update>
+
+    <insert id="addBook">
+        insert into book(bname, bnowprice, bprice, bwriter, btranslate, bpublishing, binventory, bisbn, bsuit, bimage)
+        values(#{bname}, #{bnowprice}, #{bprice}, #{bwriter}, #{btranslate}, #{bpublishing}, #{binventory}, #{bisbn}, #{bsuit}, #{bimage})
+    </insert>
+</mapper>

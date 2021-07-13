@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.WechatMapper">
+    <resultMap id="wechatMap" type="com.example.pojo.Wechat">
+        <result property="wcid" column="wcid"></result>
+        <result property="user_id" column="user_id"></result>
+        <result property="wcnum" column="wcnum"></result>
+        <result property="wcpsd" column="wcpsd"></result>
+        <result property="wcpaypsd" column="wcpaypsd"></result>
+
+        <association property="user" javaType="com.example.pojo.User">
+            <result property="userId" column="user_id"></result>
+        </association>
+
+    </resultMap>
+
+    <select id="queryWechatByUserid" resultMap="wechatMap">
+        select * from wechat where user_id = #{user_id}
+    </select>
+
+    <select id="queryByWcid" resultMap="wechatMap">
+        select * from wechat where wcid = #{wcid}
+    </select>
+
+    <delete id="deleteWechat">
+        delete from wechat
+        where wcid = #{wcid}
+    </delete>
+
+    <insert id="insertWechat">
+        insert into wechat(user_id, wcnum, wcpsd, wcpaypsd)
+        values (#{user_id}, #{wcnum}, #{wcpsd}, #{wcpaypsd})
+    </insert>
+</mapper>

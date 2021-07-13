@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.AdminMapper">
+    <resultMap id="adminMap" type="com.example.pojo.Admin">
+        <result property="aid" column="aid"></result>
+        <result property="aname" column="aname"></result>
+        <result property="password" column="password"></result>
+    </resultMap>
+
+    <select id="queryAdminByUsername" resultMap="adminMap" parameterType="map">
+        SELECT aname, password FROM admin where aname=#{aname};
+    </select>
+
+    <select id="queryAllAdmins" resultMap="adminMap">
+        select * from admin limit 10
+    </select>
+
+    <select id="queryAllAdminsCount" resultType="_int">
+        select count(*) from admin
+    </select>
+
+    <select id="queryCurrentAdmin" resultMap="adminMap">
+        select * from admin limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryByAid" resultMap="adminMap">
+        select * from admin
+        where aid = #{aid}
+    </select>
+
+    <update id="updateByAid">
+        update admin
+        set aname = #{aname}, password = #{password}
+        where aid = #{aid}
+    </update>
+
+    <insert id="insertAdmin">
+        insert into admin(aname, password)
+        values (#{aname}, #{password})
+    </insert>
+
+    <select id="queryAdminBySearch" resultMap="adminMap">
+        select * from admin where aname like "%"#{searchInformation}"%"
+    </select>
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.ProvinceMapper">
+    <resultMap id="provinceMap" type="com.example.pojo.Province">
+        <result property="pid" column="pid"></result>
+        <result property="pname" column="pname"></result>
+    </resultMap>
+
+    <select id="queryAllProvinces" resultMap="provinceMap">
+        select pid, pname from province
+    </select>
+</mapper>

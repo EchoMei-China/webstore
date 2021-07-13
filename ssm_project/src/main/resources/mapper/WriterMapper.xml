@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.WriterMapper">
+    <resultMap id="writerMap" type="com.example.pojo.Writer">
+        <result property="wid" column="wid"></result>
+        <result property="bwriter" column="bwriter"></result>
+        <result property="wintroduction" column="wintroduction"></result>
+        <result property="wmasterpiece" column="wmasterpiece"></result>
+
+        <association property="book" javaType="com.example.pojo.Book">
+            <result property="bwriter" column="bwriter"></result>
+        </association>
+    </resultMap>
+    
+    <select id="queryByBwriter" resultMap="writerMap">
+        SELECT o.bwriter,
+        e.bwriter,
+        e.wid,
+        e.wintroduction,
+        e.wmasterpiece
+        FROM book o, writer e
+        WHERE o.bwriter = e.bwriter
+        AND o.bwriter = #{wname} LIMIT 1
+    </select>
+
+    <select id="queryAllWriters" resultMap="writerMap">
+        select * from writer limit 10
+    </select>
+
+    <select id="queryAllWritersCount" resultType="_int">
+        select count(*) from writer
+    </select>
+
+    <select id="queryCurrentWriters" resultMap="writerMap">
+        select * from writer
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <insert id="insertNewWriter">
+        insert into writer (bwriter, wintroduction, wmasterpiece)
+        values (#{bwriter}, #{wintroduction}, #{wmasterpiece})
+    </insert>
+
+    <update id="updateWriterByWid">
+        update writer
+        set wintroduction = #{wintroduction},  wmasterpiece = #{wmasterpiece}
+        where wid = #{wid}
+    </update>
+
+    <select id="searchWriter" resultMap="writerMap">
+        select * from writer
+        where bwriter like "%"#{searchInformation}"%"
+    </select>
+
+    <select id="queryWriterByWid" resultMap="writerMap">
+        select * from writer
+        where wid = #{wid}
+    </select>
+</mapper>
